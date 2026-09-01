@@ -1,0 +1,102 @@
+POST http://localhost:8080/products
+Content-Type: application/json
+
+{
+    "name": "Samsung TV",
+    "category": "Electronics",
+    "serialNumber": "TV12345"
+}
+###
+
+GET http://localhost:8080/products
+###
+
+POST http://localhost:8080/warranties
+Content-Type: application/json
+
+{
+  "productId": 1,
+  "startDate": "2026-08-18",
+  "endDate": "2028-08-18",
+  "status": "ACTIVE"
+}
+###
+
+GET http://localhost:8080/warranties
+###
+
+POST http://localhost:8080/claims
+Content-Type: application/json
+
+{
+  "productId": 1,
+  "issue": "Screen not working",
+  "status": "PENDING"
+}
+###
+
+GET http://localhost:8080/claims
+###
+
+PUT http://localhost:8080/claims/2/status?status=APPROVED
+###
+
+POST http://localhost:8080/claims
+Content-Type: application/json
+
+{
+  "productId": 1,
+  "issue": "Screen not working",
+  "status": "PENDING"
+}
+###
+PUT http://localhost:8080/claims/3/status?status=APPROVED
+###
+GET http://localhost:8080/claims
+###
+
+GET http://localhost:8080/warranties
+###
+POST http://localhost:8080/warranties
+Content-Type: application/json
+
+{
+  "productId": 1,
+  "startDate": "2026-08-22",
+  "endDate": "2027-08-22",
+  "status": "ACTIVE"
+
+}
+###
+
+GET http://localhost:8080/warranties
+###
+
+GET http://localhost:8080/products
+###
+
+POST http://localhost:8080/products
+Content-Type: application/json
+
+{
+  "name": "LG Washing Machine",
+  "category": "Home Appliance",
+  "serialNumber": "LG12345"
+}
+###
+GET http://localhost:8080/products
+###
+GET http://localhost:8080/customers
+###
+GET http://localhost:8080/customers
+###
+POST http://localhost:8080/customers
+Content-Type: application/json
+
+{
+  "name": "Dharmaraj",
+  "email": "dharmaraj@gmail.com",
+  "password": "123456"
+}
+###
+GET http://localhost:8080/customers

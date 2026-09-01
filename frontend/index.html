@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Warranty Claim Platform</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Product Warranty Claim Platform</h1>
+        <p>Manage Products, Warranties and Claims</p>
+    </header>
+    <main>
+        <div class="buttons">
+            <button onclick="showProducts()">Products</button>
+            <button onclick="showWarranties()">Warranties</button>
+            <button onclick="showClaims()">Claims</button>
+            <button onclick="showCustomers()">Customers</button>
+            <button onclick="showAddProduct()">Add Product</button>
+            <button onclick="showAddWarranty()">Add Warranty</button>
+            <button onclick="showAddClaim()">Add Claim</button>
+            <button onclick="showAddCustomer()">Add Customer</button>
+            <button onclick="logout()">Logout</button>
+        </div>
+        <div class="dashboard-cards">
+
+    <div class="dashboard-card">
+        <h3>Total Products</h3>
+        <p id="productCount">0</p>
+    </div>
+
+    <div class="dashboard-card">
+        <h3>Total Warranties</h3>
+        <p id="warrantyCount">0</p>
+    </div>
+
+    <div class="dashboard-card">
+        <h3>Total Claims</h3>
+        <p id="claimCount">0</p>
+    </div>
+
+    <div class="dashboard-card">
+        <h3>Total Customers</h3>
+        <p id="customerCount">0</p>
+    </div>
+
+</div>
+        <section>
+            <h2 id="sectionTitle">Welcome</h2>
+            <div id="result">
+                <p>Select an option above.</p>
+            </div>
+        </section>
+
+    </main>
+
+    <script src="script.js"></script>
+
+</body>
+</html>

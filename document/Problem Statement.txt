@@ -1,0 +1,61 @@
+# Problem Statement
+
+## 1. Title
+Product Warranty Claim Processing Platform
+
+## 2. Domain
+This project belongs to the Retail and Customer Service domain. It focuses on digital warranty management for electronic products and appliances. The platform helps customers and companies manage warranty claims efficiently.
+
+## 3. Who is the user? (2–3 user types, with roles)
+The main users are Customers and Admins.
+
+Customers can register products, submit warranty claims, and track claim status.
+
+Admins verify warranty details, approve or reject claims, and manage customer requests.
+
+## 4. What problem are we solving?
+Many companies still process warranty claims manually, making the process slow and error-prone. Customers often struggle to know the status of their claims and submit documents repeatedly. This platform provides a digital solution that simplifies warranty claim submission, verification, and tracking.
+
+## 5. Proposed Solution
+The application allows customers to register products and submit warranty claims online. Admins can review, verify, approve, or reject claims through a centralized dashboard. The system also updates claim status so customers can track their requests in real time.
+
+## 6. Core Entities / Database Tables
+The core database tables are:
+
+1. Customer
+2. Product
+3. Warranty
+4. Claim
+5. Admin
+These tables store user details, product information, warranty periods, claim records, and administrator data. Together, they support the complete warranty claim process.
+
+## 7. User Roles & Permissions
+
+### Customer
+- Register products.
+- Submit warranty claims.
+- View claim status.
+
+### Admin
+- Manage products.
+- Verify warranty details.
+- Review claims.
+- Approve or reject requests.
+Each role has specific permissions to ensure secure access.
+
+## 8. Success Criteria
+The application should allow customers to submit a warranty claim within a few minutes. Admins should be able to process claims quickly and update their status accurately. Customers should receive clear claim status updates without visiting the service center.
+
+## 9. Out of Scope
+The MVP will not include:
+- Online payments.
+- AI-based claim verification.
+- Email/SMS notifications.
+- Mobile applications.
+- Advanced analytics.
+- Third-party service center integrations.
+These features can be added in future versions.
+
+## 10. Chosen Track
+Java (Spring Boot)
+The application will be developed using Java Spring Boot for the backend, MySQL for the database, and HTML, CSS, and Bootstrap/Thymeleaf for the frontend. Git and GitHub will be used for version control and project management.
