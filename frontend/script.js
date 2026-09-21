@@ -1,4 +1,4 @@
-const API = "https://capstone-production-751b.up.railway.app";;
+const API = "http://localhost:8080";
 
 // ==================== SHOW PRODUCTS ====================
 
@@ -117,6 +117,9 @@ function showCustomers() {
                         <button onclick="editCustomer(${customer.id}, '${customer.name}', '${customer.email}')">
                             Edit
                         </button>
+                        <button onclick="deleteCustomer(${customer.id})">
+                           Delete
+                        </button>
                     </div>
                 `;
             });
@@ -204,6 +207,29 @@ function updateCustomer(id) {
 
             console.error(error);
         });
+}
+function deleteCustomer(id) {
+
+    if (!confirm("Are you sure you want to delete this customer?")) {
+        return;
+    }
+
+    fetch(API + "/customers/" + id, {
+        method: "DELETE"
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error("Delete failed");
+        }
+
+        alert("Customer deleted successfully!");
+
+        showCustomers();
+    })
+    .catch(error => {
+        alert("Unable to delete customer.");
+        console.error(error);
+    });
 }
 
 
