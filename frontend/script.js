@@ -1,6 +1,5 @@
 
-const API = "https://capstone-production-751b.up.railway.app";
-
+const API = "https://capstone-production-5690.up.railway.app";
 // ==================== SHOW PRODUCTS ====================
 
 function showProducts() {
