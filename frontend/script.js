@@ -529,3 +529,27 @@ function loadDashboardCounts() {
 }
 
 loadDashboardCounts();
+// ==================== ADD TO CART ====================
+
+function addToCart(productName) {
+    let cart = JSON.parse(
+        localStorage.getItem("warrantyProductCart") || "[]"
+    );
+
+    if (cart.includes(productName)) {
+        document.getElementById("cartMessage").innerText =
+            productName + " is already selected!";
+        return;
+    }
+
+    cart.push(productName);
+
+    localStorage.setItem(
+        "warrantyProductCart",
+        JSON.stringify(cart)
+    );
+
+    document.getElementById("cartMessage").innerText =
+        productName + " added successfully! Total selected: " +
+        cart.length;
+}
