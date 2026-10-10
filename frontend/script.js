@@ -20,6 +20,8 @@ function showProducts() {
             })[character]);
             const imageForProduct = product => {
                 const details = `${product.name || ""} ${product.category || ""}`.toLowerCase();
+                if (/\bsony\b/.test(details)) return "https://cdn.simpleicons.org/sony/000000";
+                if (/\bsamsung\b/.test(details)) return "https://cdn.simpleicons.org/samsung/1428A0";
                 if (/tv|television/.test(details)) return "https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?auto=format&fit=crop&w=900&q=80";
                 if (/washing|appliance|refrigerator|fridge/.test(details)) return "https://images.unsplash.com/photo-1626806787461-102c1bfaaea1?auto=format&fit=crop&w=900&q=80";
                 if (/phone|mobile/.test(details)) return "https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=900&q=80";
