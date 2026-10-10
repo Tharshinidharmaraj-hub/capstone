@@ -3,6 +3,7 @@ const API = "https://capstone-production-5690.up.railway.app";
 // ==================== SHOW PRODUCTS ====================
 
 function showProducts() {
+    const gallery = document.getElementById("productGallery");
     fetch(API + "/products")
         .then(response => {
             if (!response.ok) throw new Error("Products failed");
@@ -10,25 +11,37 @@ function showProducts() {
         })
         .then(data => {
             document.getElementById("sectionTitle").innerText = "Products";
+            const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, character => ({
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': "&quot;",
+                "'": "&#39;"
+            })[character]);
+            const imageForProduct = product => {
+                const details = `${product.name || ""} ${product.category || ""}`.toLowerCase();
+                if (/tv|television/.test(details)) return "https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?auto=format&fit=crop&w=900&q=80";
+                if (/washing|appliance|refrigerator|fridge/.test(details)) return "https://images.unsplash.com/photo-1626806787461-102c1bfaaea1?auto=format&fit=crop&w=900&q=80";
+                if (/phone|mobile/.test(details)) return "https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=900&q=80";
+                if (/laptop|computer/.test(details)) return "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=900&q=80";
+                if (/camera/.test(details)) return "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=900&q=80";
+                return "https://images.unsplash.com/photo-1498049794561-7780e7231661?auto=format&fit=crop&w=900&q=80";
+            };
 
-            let output = "";
-
-            data.forEach(product => {
-                output += `
-                    <div class="card">
-                        <p><strong>ID:</strong> ${product.id}</p>
-                        <p><strong>Name:</strong> ${product.name}</p>
-                        <p><strong>Category:</strong> ${product.category}</p>
-                        <p><strong>Serial Number:</strong> ${product.serialNumber}</p>
-                    </div>`;
-            });
-
-            document.getElementById("result").innerHTML =
-                output || "<p>No products found.</p>";
+            gallery.innerHTML = data.map(product => `
+                <article class="product-card">
+                    <img src="${imageForProduct(product)}" alt="${escapeHtml(product.name || "Product")}" loading="lazy">
+                    <h3>${escapeHtml(product.name || "Unnamed product")}</h3>
+                    <p><strong>ID:</strong> ${escapeHtml(product.id)}</p>
+                    <p><strong>Category:</strong> ${escapeHtml(product.category || "Uncategorized")}</p>
+                    <p><strong>Serial Number:</strong> ${escapeHtml(product.serialNumber || "N/A")}</p>
+                </article>`).join("") || "<p>No products found.</p>";
+            gallery.hidden = false;
         })
         .catch(error => {
-            document.getElementById("result").innerHTML =
-                "<p>Unable to connect to backend.</p>";
+            document.getElementById("sectionTitle").innerText = "Products";
+            gallery.innerHTML = "<p>Unable to connect to backend.</p>";
+            gallery.hidden = false;
             console.error(error);
         });
 }
