@@ -1,24 +1,16 @@
-document.getElementById("loginForm").addEventListener("submit", function(event) {
-    event.preventDefault();
-
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
-    const role = document.getElementById("role").value;
+function login() {
+    const email = document.getElementById("loginEmail").value.trim();
+    const password = document.getElementById("loginPassword").value;
+    const message = document.getElementById("loginMessage");
 
     if (email === "" || password === "") {
-        document.getElementById("loginMessage").innerText =
-            "Please enter email and password.";
+        message.innerText = "Please enter email and password.";
         return;
     }
 
-    // Simple login for frontend testing
-    if (role === "admin") {
-        localStorage.setItem("role", "admin");
-    } else {
-        localStorage.setItem("role", "customer");
-    }
-
+    // Frontend demo only — not secure authentication
     localStorage.setItem("email", email);
+    localStorage.setItem("role", "customer");
 
     window.location.href = "index.html";
-});
+}
