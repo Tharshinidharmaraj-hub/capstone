@@ -1,5 +1,4 @@
 package com.productwarrenty.backend.controller;
-
 import com.productwarrenty.backend.model.Customer;
 import com.productwarrenty.backend.service.CustomerService;
 import org.springframework.web.bind.annotation.*;

@@ -1,10 +1,14 @@
+
 const API = "https://capstone-production-751b.up.railway.app";
 
 // ==================== SHOW PRODUCTS ====================
 
 function showProducts() {
     fetch(API + "/products")
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) throw new Error("Products failed");
+            return response.json();
+        })
         .then(data => {
             document.getElementById("sectionTitle").innerText = "Products";
 
@@ -17,8 +21,7 @@ function showProducts() {
                         <p><strong>Name:</strong> ${product.name}</p>
                         <p><strong>Category:</strong> ${product.category}</p>
                         <p><strong>Serial Number:</strong> ${product.serialNumber}</p>
-                    </div>
-                `;
+                    </div>`;
             });
 
             document.getElementById("result").innerHTML =
@@ -31,12 +34,14 @@ function showProducts() {
         });
 }
 
-
 // ==================== SHOW WARRANTIES ====================
 
 function showWarranties() {
     fetch(API + "/warranties")
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) throw new Error("Warranties failed");
+            return response.json();
+        })
         .then(data => {
             document.getElementById("sectionTitle").innerText = "Warranties";
 
@@ -50,8 +55,7 @@ function showWarranties() {
                         <p><strong>Start Date:</strong> ${warranty.startDate}</p>
                         <p><strong>End Date:</strong> ${warranty.endDate}</p>
                         <p><strong>Status:</strong> ${warranty.status}</p>
-                    </div>
-                `;
+                    </div>`;
             });
 
             document.getElementById("result").innerHTML =
@@ -64,12 +68,14 @@ function showWarranties() {
         });
 }
 
-
 // ==================== SHOW CLAIMS ====================
 
 function showClaims() {
     fetch(API + "/claims")
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) throw new Error("Claims failed");
+            return response.json();
+        })
         .then(data => {
             document.getElementById("sectionTitle").innerText = "Claims";
 
@@ -82,8 +88,7 @@ function showClaims() {
                         <p><strong>Product ID:</strong> ${claim.productId}</p>
                         <p><strong>Issue:</strong> ${claim.issue}</p>
                         <p><strong>Status:</strong> ${claim.status}</p>
-                    </div>
-                `;
+                    </div>`;
             });
 
             document.getElementById("result").innerHTML =
@@ -96,32 +101,40 @@ function showClaims() {
         });
 }
 
-
 // ==================== SHOW CUSTOMERS ====================
 
 function showCustomers() {
     fetch(API + "/customers")
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) throw new Error("Customers failed");
+            return response.json();
+        })
         .then(data => {
             document.getElementById("sectionTitle").innerText = "Customers";
 
             let output = "";
 
             data.forEach(customer => {
+                const name = String(customer.name || "")
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;")
+                    .replace(/'/g, "&#39;");
+
+                const email = String(customer.email || "")
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;")
+                    .replace(/'/g, "&#39;");
+
                 output += `
                     <div class="card">
                         <p><strong>ID:</strong> ${customer.id}</p>
-                        <p><strong>Name:</strong> ${customer.name}</p>
-                        <p><strong>Email:</strong> ${customer.email}</p>
-
-                        <button onclick="editCustomer(${customer.id}, '${customer.name}', '${customer.email}')">
-                            Edit
-                        </button>
-                        <button onclick="deleteCustomer(${customer.id})">
-                           Delete
-                        </button>
-                    </div>
-                `;
+                        <p><strong>Name:</strong> ${name}</p>
+                        <p><strong>Email:</strong> ${email}</p>
+                        <button onclick="editCustomer(${customer.id})">Edit</button>
+                        <button onclick="deleteCustomer(${customer.id})">Delete</button>
+                    </div>`;
             });
 
             document.getElementById("result").innerHTML =
@@ -134,535 +147,371 @@ function showCustomers() {
         });
 }
 
-
 // ==================== EDIT CUSTOMER ====================
 
-function editCustomer(id, name, email) {
+function editCustomer(id) {
+    fetch(API + "/customers")
+        .then(response => {
+            if (!response.ok) throw new Error("Failed to load customers");
+            return response.json();
+        })
+        .then(customers => {
+            const customer = customers.find(c => c.id === id);
 
-    document.getElementById("sectionTitle").innerText = "Edit Customer";
+            if (!customer) throw new Error("Customer not found");
 
-    document.getElementById("result").innerHTML = `
-        <div class="card">
+            document.getElementById("sectionTitle").innerText = "Edit Customer";
 
-            <input type="text"
-                   id="editCustomerName"
-                   value="${name}"
-                   placeholder="Name">
+            document.getElementById("result").innerHTML = `
+                <div class="card">
+                    <input type="text" id="editCustomerName"
+                           placeholder="Name">
+                    <br><br>
+                    <input type="email" id="editCustomerEmail"
+                           placeholder="Email">
+                    <br><br>
+                    <input type="password" id="editCustomerPassword"
+                           placeholder="New password (if required)">
+                    <br><br>
+                    <button onclick="updateCustomer(${id})">Update Customer</button>
+                    <button onclick="showCustomers()">Cancel</button>
+                `;
 
-            <br><br>
-
-            <input type="email"
-                   id="editCustomerEmail"
-                   value="${email}"
-                   placeholder="Email">
-
-            <br><br>
-
-            <input type="password"
-                   id="editCustomerPassword"
-                   placeholder="Password">
-
-            <br><br>
-
-            <button onclick="updateCustomer(${id})">
-                Update Customer
-            </button>
-
-            <button onclick="showCustomers()">
-                Cancel
-            </button>
-
-        </div>
-    `;
+            document.getElementById("editCustomerName").value =
+                customer.name || "";
+            document.getElementById("editCustomerEmail").value =
+                customer.email || "";
+        })
+        .catch(error => {
+            alert("Unable to load customer.");
+            console.error(error);
+        });
 }
-
 
 // ==================== UPDATE CUSTOMER ====================
 
 function updateCustomer(id) {
-
     const customer = {
-        name: document.getElementById("editCustomerName").value,
-        email: document.getElementById("editCustomerEmail").value,
+        name: document.getElementById("editCustomerName").value.trim(),
+        email: document.getElementById("editCustomerEmail").value.trim(),
         password: document.getElementById("editCustomerPassword").value
     };
 
-    fetch(API + "/customers/" + id, {
-        method: "PUT",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(customer)
-    })
-        .then(response => response.json())
-        .then(data => {
-
-            alert("Customer updated successfully!");
-
-            showCustomers();
-        })
-        .catch(error => {
-
-            alert("Unable to update customer.");
-
-            console.error(error);
-        });
-}
-function deleteCustomer(id) {
-
-    if (!confirm("Are you sure you want to delete this customer?")) {
+    if (!customer.name || !customer.email) {
+        alert("Please enter name and email.");
         return;
     }
 
     fetch(API + "/customers/" + id, {
-        method: "DELETE"
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(customer)
     })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error("Delete failed");
-        }
-
-        alert("Customer deleted successfully!");
-
-        showCustomers();
-    })
-    .catch(error => {
-        alert("Unable to delete customer.");
-        console.error(error);
-    });
+        .then(response => {
+            if (!response.ok) throw new Error("Update failed");
+            return response.json();
+        })
+        .then(() => {
+            alert("Customer updated successfully!");
+            showCustomers();
+        })
+        .catch(error => {
+            alert("Unable to update customer.");
+            console.error(error);
+        });
 }
 
+// ==================== DELETE CUSTOMER ====================
+
+function deleteCustomer(id) {
+    if (!confirm("Are you sure you want to delete this customer?")) return;
+
+    fetch(API + "/customers/" + id, { method: "DELETE" })
+        .then(response => {
+            if (!response.ok) throw new Error("Delete failed");
+            alert("Customer deleted successfully!");
+            showCustomers();
+        })
+        .catch(error => {
+            alert("Unable to delete customer.");
+            console.error(error);
+        });
+}
 
 // ==================== ADD PRODUCT ====================
 
 function showAddProduct() {
-
     document.getElementById("sectionTitle").innerText = "Add Product";
-
     document.getElementById("result").innerHTML = `
         <div class="card">
-
-            <input type="text"
-                   id="productName"
-                   placeholder="Product Name">
-
+            <input type="text" id="productName" placeholder="Product Name">
             <br><br>
-
-            <input type="text"
-                   id="productCategory"
-                   placeholder="Category">
-
+            <input type="text" id="productCategory" placeholder="Category">
             <br><br>
-
-            <input type="text"
-                   id="serialNumber"
-                   placeholder="Serial Number">
-
+            <input type="text" id="serialNumber" placeholder="Serial Number">
             <br><br>
-
-            <button onclick="addProduct()">
-                Save Product
-            </button>
-
-        </div>
-    `;
+            <button onclick="addProduct()">Save Product</button>
+        </div>`;
 }
 
-
 function addProduct() {
-
     const product = {
-
-        name: document.getElementById("productName").value,
-
-        category: document.getElementById("productCategory").value,
-
-        serialNumber: document.getElementById("serialNumber").value
+        name: document.getElementById("productName").value.trim(),
+        category: document.getElementById("productCategory").value.trim(),
+        serialNumber: document.getElementById("serialNumber").value.trim()
     };
 
+    if (!product.name || !product.category || !product.serialNumber) {
+        alert("Please fill all product fields.");
+        return;
+    }
+
     fetch(API + "/products", {
-
         method: "POST",
-
-        headers: {
-            "Content-Type": "application/json"
-        },
-
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(product)
-
     })
-        .then(response => response.json())
-
-        .then(data => {
-
-            alert("Product added successfully!");
-
-            showProducts();
+        .then(response => {
+            if (!response.ok) throw new Error("Add product failed");
+            return response.json();
         })
-
+        .then(() => {
+            alert("Product added successfully!");
+            showProducts();
+            loadDashboardCounts();
+        })
         .catch(error => {
-
             alert("Unable to add product.");
-
             console.error(error);
         });
 }
-
 
 // ==================== ADD WARRANTY ====================
 
 function showAddWarranty() {
-
     document.getElementById("sectionTitle").innerText = "Add Warranty";
-
     document.getElementById("result").innerHTML = `
         <div class="card">
-
-            <input type="number"
-                   id="warrantyProductId"
-                   placeholder="Product ID">
-
+            <input type="number" id="warrantyProductId" placeholder="Product ID">
             <br><br>
-
-            <input type="date"
-                   id="warrantyStartDate">
-
+            <input type="date" id="warrantyStartDate">
             <br><br>
-
-            <input type="date"
-                   id="warrantyEndDate">
-
+            <input type="date" id="warrantyEndDate">
             <br><br>
-
-            <input type="text"
-                   id="warrantyStatus"
-                   placeholder="Status">
-
+            <input type="text" id="warrantyStatus" placeholder="Status">
             <br><br>
-
-            <button onclick="addWarranty()">
-                Save Warranty
-            </button>
-
-        </div>
-    `;
+            <button onclick="addWarranty()">Save Warranty</button>
+        </div>`;
 }
 
-
 function addWarranty() {
-
     const warranty = {
-
-        productId: Number(
-            document.getElementById("warrantyProductId").value
-        ),
-
-        startDate:
-            document.getElementById("warrantyStartDate").value,
-
-        endDate:
-            document.getElementById("warrantyEndDate").value,
-
-        status:
-            document.getElementById("warrantyStatus").value
+        productId: Number(document.getElementById("warrantyProductId").value),
+        startDate: document.getElementById("warrantyStartDate").value,
+        endDate: document.getElementById("warrantyEndDate").value,
+        status: document.getElementById("warrantyStatus").value.trim()
     };
 
+    if (!warranty.productId || !warranty.startDate ||
+        !warranty.endDate || !warranty.status) {
+        alert("Please fill all warranty fields.");
+        return;
+    }
+
     fetch(API + "/warranties", {
-
         method: "POST",
-
-        headers: {
-            "Content-Type": "application/json"
-        },
-
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(warranty)
-
     })
-        .then(response => response.json())
-
-        .then(data => {
-
-            alert("Warranty added successfully!");
-
-            showWarranties();
+        .then(response => {
+            if (!response.ok) throw new Error("Add warranty failed");
+            return response.json();
         })
-
+        .then(() => {
+            alert("Warranty added successfully!");
+            showWarranties();
+            loadDashboardCounts();
+        })
         .catch(error => {
-
             alert("Unable to add warranty.");
-
             console.error(error);
         });
 }
-
 
 // ==================== ADD CLAIM ====================
 
 function showAddClaim() {
-
     document.getElementById("sectionTitle").innerText = "Add Claim";
-
     document.getElementById("result").innerHTML = `
         <div class="card">
-
-            <input type="number"
-                   id="claimProductId"
-                   placeholder="Product ID">
-
+            <input type="number" id="claimProductId" placeholder="Product ID">
             <br><br>
-
-            <input type="text"
-                   id="claimIssue"
-                   placeholder="Issue">
-
+            <input type="text" id="claimIssue" placeholder="Issue">
             <br><br>
-
-            <input type="text"
-                   id="claimStatus"
-                   placeholder="Status">
-
+            <input type="text" id="claimStatus" placeholder="Status">
             <br><br>
-
-            <button onclick="addClaim()">
-                Save Claim
-            </button>
-
-        </div>
-    `;
+            <button onclick="addClaim()">Save Claim</button>
+        </div>`;
 }
 
-
 function addClaim() {
-
     const claim = {
-
-        productId: Number(
-            document.getElementById("claimProductId").value
-        ),
-
-        issue:
-            document.getElementById("claimIssue").value,
-
-        status:
-            document.getElementById("claimStatus").value
+        productId: Number(document.getElementById("claimProductId").value),
+        issue: document.getElementById("claimIssue").value.trim(),
+        status: document.getElementById("claimStatus").value.trim()
     };
 
+    if (!claim.productId || !claim.issue || !claim.status) {
+        alert("Please fill all claim fields.");
+        return;
+    }
+
     fetch(API + "/claims", {
-
         method: "POST",
-
-        headers: {
-            "Content-Type": "application/json"
-        },
-
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(claim)
-
     })
-        .then(response => response.json())
-
-        .then(data => {
-
-            alert("Claim added successfully!");
-
-            showClaims();
+        .then(response => {
+            if (!response.ok) throw new Error("Add claim failed");
+            return response.json();
         })
-
+        .then(() => {
+            alert("Claim added successfully!");
+            showClaims();
+            loadDashboardCounts();
+        })
         .catch(error => {
-
             alert("Unable to add claim.");
-
             console.error(error);
         });
 }
-
 
 // ==================== ADD CUSTOMER ====================
 
 function showAddCustomer() {
-
     document.getElementById("sectionTitle").innerText = "Add Customer";
-
     document.getElementById("result").innerHTML = `
         <div class="card">
-
-            <input type="text"
-                   id="customerName"
-                   placeholder="Name">
-
+            <input type="text" id="customerName" placeholder="Name">
             <br><br>
-
-            <input type="email"
-                   id="customerEmail"
-                   placeholder="Email">
-
+            <input type="email" id="customerEmail" placeholder="Email">
             <br><br>
-
-            <input type="password"
-                   id="customerPassword"
-                   placeholder="Password">
-
+            <input type="password" id="customerPassword" placeholder="Password">
             <br><br>
-
-            <button onclick="addCustomer()">
-                Save Customer
-            </button>
-
-        </div>
-    `;
+            <button onclick="addCustomer()">Save Customer</button>
+        </div>`;
 }
 
-
 function addCustomer() {
-
     const customer = {
-
-        name:
-            document.getElementById("customerName").value,
-
-        email:
-            document.getElementById("customerEmail").value,
-
-        password:
-            document.getElementById("customerPassword").value
+        name: document.getElementById("customerName").value.trim(),
+        email: document.getElementById("customerEmail").value.trim(),
+        password: document.getElementById("customerPassword").value
     };
 
+    if (!customer.name || !customer.email || !customer.password) {
+        alert("Please fill all customer fields.");
+        return;
+    }
+
     fetch(API + "/customers", {
-
         method: "POST",
-
-        headers: {
-            "Content-Type": "application/json"
-        },
-
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(customer)
-
     })
-        .then(response => response.json())
-
-        .then(data => {
-
-            alert("Customer added successfully!");
-
-            showCustomers();
+        .then(response => {
+            if (!response.ok) throw new Error("Add customer failed");
+            return response.json();
         })
-
+        .then(() => {
+            alert("Customer added successfully!");
+            showCustomers();
+            loadDashboardCounts();
+        })
         .catch(error => {
-
             alert("Unable to add customer.");
-
             console.error(error);
         });
 }
-
 
 // ==================== LOGIN ====================
 
 function login() {
+    const email = document.getElementById("loginEmail").value.trim();
+    const password = document.getElementById("loginPassword").value;
 
-    const email =
-        document.getElementById("loginEmail").value;
-
-    const password =
-        document.getElementById("loginPassword").value;
-
-    const customer = {
-
-        email: email,
-
-        password: password
-    };
+    if (!email || !password) {
+        document.getElementById("loginMessage").innerText =
+            "Enter email and password.";
+        return;
+    }
 
     fetch(API + "/customers/login", {
-
         method: "POST",
-
-        headers: {
-            "Content-Type": "application/json"
-        },
-
-        body: JSON.stringify(customer)
-
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password })
     })
-        .then(response => {
+        .then(async response => {
+            const text = await response.text();
+            let data = null;
 
-            if (!response.ok) {
-
-                throw new Error("Login failed");
+            try {
+                data = text ? JSON.parse(text) : null;
+            } catch {
+                data = null;
             }
 
-            return response.json();
+            if (!response.ok) {
+                throw new Error("Invalid email or password");
+            }
+
+            return data;
         })
-
         .then(data => {
-
             if (data && data.email) {
-
                 window.location.href = "index.html";
-
             } else {
-
                 document.getElementById("loginMessage").innerText =
                     "Invalid email or password";
             }
         })
-
         .catch(error => {
-
             document.getElementById("loginMessage").innerText =
-                "Unable to connect to backend";
-
+                error.message === "Invalid email or password"
+                    ? "Invalid email or password"
+                    : "Unable to connect to backend";
             console.error(error);
         });
 }
 
-
 // ==================== LOGOUT ====================
 
 function logout() {
-
     window.location.href = "login.html";
 }
-
 
 // ==================== DASHBOARD COUNTS ====================
 
 function loadDashboardCounts() {
+    const counts = [
+        ["/products", "productCount"],
+        ["/warranties", "warrantyCount"],
+        ["/claims", "claimCount"],
+        ["/customers", "customerCount"]
+    ];
 
-    fetch(API + "/products")
-        .then(response => response.json())
-        .then(data => {
-
-            document.getElementById("productCount").innerText =
-                data.length;
-        });
-
-
-    fetch(API + "/warranties")
-        .then(response => response.json())
-        .then(data => {
-
-            document.getElementById("warrantyCount").innerText =
-                data.length;
-        });
-
-
-    fetch(API + "/claims")
-        .then(response => response.json())
-        .then(data => {
-
-            document.getElementById("claimCount").innerText =
-                data.length;
-        });
-
-
-    fetch(API + "/customers")
-        .then(response => response.json())
-        .then(data => {
-
-            document.getElementById("customerCount").innerText =
-                data.length;
-        });
+    counts.forEach(([endpoint, elementId]) => {
+        fetch(API + endpoint)
+            .then(response => {
+                if (!response.ok) throw new Error("Failed to load " + endpoint);
+                return response.json();
+            })
+            .then(data => {
+                const element = document.getElementById(elementId);
+                if (element) element.innerText = data.length;
+            })
+            .catch(error => console.error(error));
+    });
 }
-
 
 loadDashboardCounts();
